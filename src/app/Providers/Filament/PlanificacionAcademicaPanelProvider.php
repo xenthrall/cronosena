@@ -18,6 +18,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use App\Filament\Widgets\ShortcutsWidget;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 
@@ -59,6 +60,7 @@ class PlanificacionAcademicaPanelProvider extends PanelProvider
             ->widgets([
                 AccountWidget::class,
                 CronosenaInfoWidget::class,
+                ShortcutsWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
