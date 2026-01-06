@@ -33,7 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login(AdminLogin::class)
             ->profile(isSimple: false)
-            
+
             ->colors([
                 'primary' => Color::Indigo,
             ])
@@ -108,7 +108,7 @@ class AdminPanelProvider extends PanelProvider
             //->spa() //Habilitar la aplicación de una sola página (SPA)
             ->unsavedChangesAlerts()
             //->sidebarFullyCollapsibleOnDesktop() //Contraer la barra lateral completamente
-        ->multiFactorAuthentication([
+            ->multiFactorAuthentication([
                 AppAuthentication::make(),
             ]);
     }
