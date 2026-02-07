@@ -94,6 +94,9 @@ class User extends Authenticatable implements
         if ($panel->getId() === 'planificacion') {
             return $this->can('panel.planificacion.access');
         }
+        if ($panel->getId() === 'instructor') {
+            return $this->can('panel.instructor.access');
+        }
         return false;
     }
 

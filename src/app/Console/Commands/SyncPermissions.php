@@ -78,6 +78,7 @@ class SyncPermissions extends Command
             'Paneles' => [
                 ['name' => 'panel.admin.access', 'action' => 'Acceso al Panel Administrativo', 'description' => 'Permite acceder y visualizar el panel administrativo del sistema.'],
                 ['name' => 'panel.planificacion.access', 'action' => 'Acceso al Panel de Planificación', 'description' => 'Permite acceder y visualizar el panel de planificación del sistema.'],
+                ['name' => 'panel.instructor.access', 'action' => 'Acceso al Panel de Instructor', 'description' => 'Permite acceder y visualizar el panel de instructor del sistema.'],
             ],
 
             'Reportes' => [
