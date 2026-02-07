@@ -2,107 +2,49 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\CanResetPassword;
-use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Models\Contracts\HasAvatar;
-use Filament\Models\Contracts\HasName;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Storage;
-
-class Instructor extends Authenticatable implements FilamentUser,  HasAvatar, HasName, CanResetPassword
+class Instructor extends Model
 {
-    use Notifiable;
-    use CanResetPasswordTrait;
+    use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'document_number',
         'document_type',
-        'full_name',
-        'name',
+        'first_name',
         'last_name',
-        'email',
         'institutional_email',
         'phone',
-        'password',
         'executing_team_id',
-        'profession_id',
         'specialty',
-        'photo_url',
         'is_active',
     ];
 
-    protected $hidden = [
-        'password',
-        'remember_token',
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'is_active' => 'boolean',
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
-
-    public function canAccessPanel(Panel $panel): bool
-    {
-        // Solo permitir si el panel es “instructor”
-        return $panel->getId() === 'instructor' && $this->is_active;
-    }
-    public function getFilamentName(): string
-    {
-
-        if ($this->name && $this->last_name) {
-            return "{$this->name} {$this->last_name}";
-        }
-        if ($this->name) {
-            return $this->name;
-        }
-        return $this->full_name;
-    }
-
-    public function getFilamentAvatarUrl(): ?string
-    {
-        if (! $this->photo_url) {
-            return null;
-        }
-        $disk = Storage::disk('public');
-
-
-        if (! $disk->exists($this->photo_url)) {
-            return null;
-        }
-        /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
-        return $disk->url($this->photo_url);
-    }
-
     /**
-     * Relaciones
+     * -----------------------------
+     * Relaciones 
+     * -----------------------------
      */
 
-    // Un instructor pertenece a un equipo ejecutor
-    public function executingTeam()
+    public function user()
     {
-        return $this->belongsTo(ExecutingTeam::class, 'executing_team_id');
+        return $this->belongsTo(User::class);
     }
 
-    /*/ Un instructor pertenece a una profesión
-    public function profesion()
+    public function executingTeam()
     {
-        return $this->belongsTo(Profesion::class, 'profesion_id');
+        return $this->belongsTo(ExecutingTeam::class);
     }
-    */
 
     public function norms()
     {
-        return $this->belongsToMany(Norm::class, 'instructor_norm')
-            ->withPivot([]);
+        return $this->belongsToMany(Norm::class, 'instructor_norm');
     }
 
     public function fichaCompetencyExecutions()
@@ -113,5 +55,16 @@ class Instructor extends Authenticatable implements FilamentUser,  HasAvatar, Ha
     public function fichaInstructorLeaderships()
     {
         return $this->hasMany(FichaInstructorLeadership::class);
+    }
+
+    /**
+     * -----------------------------
+     * Accesores
+     * -----------------------------
+     */
+
+    public function getFullNameAttribute(): string
+    {
+        return trim("{$this->first_name} {$this->last_name}");
     }
 }

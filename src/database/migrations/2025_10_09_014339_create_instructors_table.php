@@ -13,40 +13,35 @@ return new class extends Migration
     {
         Schema::create('instructors', function (Blueprint $table) {
             $table->id();
-            
-            $table->string('document_number')->unique();
+
+            // Relación 1:1 con users
+            $table->foreignId('user_id')
+                ->unique()
+                ->constrained('users')
+                ->cascadeOnDelete();
+
+                $table->string('document_number')->unique();
             $table->string('document_type')->nullable();
-            $table->string('full_name')->nullable();
-            $table->string('name')->nullable();
+
+            $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
-            $table->string('email')->nullable()->unique();
-            $table->string('institutional_email')->nullable()->unique(); // correo institucional
+
+            // Contacto institucional
+            $table->string('institutional_email')->nullable()->unique();
             $table->string('phone')->nullable();
 
-            // Campos de autenticación
-            $table->string('password')->nullable();
-            $table->rememberToken(); // Para el "recuérdame"
-            $table->timestamp('email_verified_at')->nullable(); // (Más adelante para verificación de email)
-
-            // Relaciones
             $table->foreignId('executing_team_id')
                 ->nullable()
                 ->constrained('executing_teams')
                 ->nullOnDelete();
 
-            /*
-            $table->foreignId('profession_id')
-                ->nullable()
-                ->constrained('professions')
-                ->cascadeOnUpdate()
-                ->nullOnDelete();
-            */
-
             $table->string('specialty')->nullable();
-            $table->string('photo_url')->nullable();
+
+            // Estado académico
             $table->boolean('is_active')->default(true);
 
             $table->timestamps();
+
         });
     }
 

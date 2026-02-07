@@ -5,13 +5,20 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\Storage;
 
-class User extends Authenticatable implements FilamentUser, HasAppAuthentication, MustVerifyEmail
+
+class User extends Authenticatable implements
+    FilamentUser,
+    HasAvatar,
+    HasAppAuthentication,
+    MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -25,7 +32,13 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     protected $fillable = [
         'name',
         'email',
+        'username',
+        'photo_url',
         'password',
+        'is_active',
+        'blocked_at',
+        'last_login_at',
+        'created_by',
     ];
 
     /**
@@ -48,10 +61,29 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     {
         return [
             'email_verified_at' => 'datetime',
+            'blocked_at' => 'datetime',
+            'last_login_at' => 'datetime',
+            'is_active' => 'boolean',
             'password' => 'hashed',
             'app_authentication_secret' => 'encrypted',
 
         ];
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        if (! $this->photo_url) {
+            return null;
+        }
+
+        $disk = Storage::disk('public');
+
+        if (! $disk->exists($this->photo_url)) {
+            return null;
+        }
+
+        /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
+        return $disk->url($this->photo_url);
     }
 
     public function canAccessPanel(Panel $panel): bool
@@ -68,14 +100,14 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
     public function getAppAuthenticationSecret(): ?string
     {
         // This method should return the user's saved app authentication secret.
-    
+
         return $this->app_authentication_secret;
     }
 
     public function saveAppAuthenticationSecret(?string $secret): void
     {
         // This method should save the user's app authentication secret.
-    
+
         $this->app_authentication_secret = $secret;
         $this->save();
     }
@@ -85,8 +117,26 @@ class User extends Authenticatable implements FilamentUser, HasAppAuthentication
         // In a user's authentication app, each account can be represented by a "holder name".
         // If the user has multiple accounts in your app, it might be a good idea to use
         // their email address as then they are still uniquely identifiable.
-    
+
         return $this->email;
     }
 
+    /**
+     * -----------------------------
+     * Relaciones
+     * -----------------------------
+     */
+
+    // Quién creó este usuario
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    // Perfil instructor (si existe)
+    public function instructor()
+    {
+        return $this->hasOne(Instructor::class);
+    }
+    
 }
