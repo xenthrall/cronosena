@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('username')->nullable()->unique();
             $table->string('photo_url')->nullable();
 
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->text('app_authentication_secret')->nullable();
 

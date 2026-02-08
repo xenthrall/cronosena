@@ -20,12 +20,12 @@ class InstructorsTable
     {
         return $table
             ->columns([
-                ImageColumn::make('photo_url')
+                ImageColumn::make('user.photo_url')
                     ->label('')
                     ->disk('public')
                     ->circular()
                     ->toggleable(false),
-                TextColumn::make('full_name')
+                TextColumn::make('user.name')
                     ->label('Instructor')
                     ->searchable() // busca en esta columna
                     ->wrap(),
@@ -47,7 +47,7 @@ class InstructorsTable
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->tooltip(fn($record) => $record->specialty),
 
-                TextColumn::make('email')
+                TextColumn::make('user.email')
                     ->label('Correo')
                     ->searchable()
                     ->toggleable(),

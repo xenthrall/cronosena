@@ -2,12 +2,14 @@
 
 namespace App\Filament\Resources\Users\Tables;
 
+use Dom\Text;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\IconColumn;
 use Illuminate\Support\Facades\Auth;
+use Filament\Tables\Columns\ImageColumn;
 
 class UsersTable
 {
@@ -15,6 +17,12 @@ class UsersTable
     {
         return $table
             ->columns([
+                ImageColumn::make('user.photo_url')
+                    ->label('')
+                    ->disk('public')
+                    ->circular()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('name')
                     ->label('Nombre')
                     ->searchable(),
@@ -29,6 +37,10 @@ class UsersTable
                         'success' => 'viewer',
                     ])
                     ->sortable(),
+                TextColumn::make('creator.name')
+                    ->label('Creado por')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 IconColumn::make('email_verified_at')
                     ->label('Verificado')
@@ -54,9 +66,7 @@ class UsersTable
                     ->visible(fn() => Auth::user()?->can('user.edit')),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                   
-                ]),
+                BulkActionGroup::make([]),
             ]);
     }
 }
