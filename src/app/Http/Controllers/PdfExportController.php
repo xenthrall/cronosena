@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\BrowsershotService;
 use App\Traits\Gantt\GanttBarsTrait;
 use Illuminate\Support\Carbon;
 use App\Models\FichaCompetencyExecution;
 use App\Models\Instructor;
 use App\Traits\Gantt\HasGanttConfiguration;
 use Illuminate\Support\Collection;
-use Spatie\Browsershot\Browsershot;
 
 
 

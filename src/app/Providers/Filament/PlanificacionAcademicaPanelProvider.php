@@ -18,6 +18,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use App\Filament\Widgets\ShortcutsWidget;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 
@@ -26,6 +27,7 @@ use App\Filament\PlanificacionAcademica\Pages\Auth\PlanificacionLogin;
 
 use App\Filament\Resources\Fichas\FichaResource;
 use App\Filament\Pages\Dashboards\CronogramasDashboard;
+use App\Filament\Resources\ProgramacionInstructors\ProgramacionInstructorResource;
 
 class PlanificacionAcademicaPanelProvider extends PanelProvider
 {
@@ -46,16 +48,19 @@ class PlanificacionAcademicaPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/PlanificacionAcademica/Resources'), for: 'App\Filament\PlanificacionAcademica\Resources')
             ->resources([
                 FichaResource::class,
+                ProgramacionInstructorResource::class,
             ])
             ->discoverPages(in: app_path('Filament/PlanificacionAcademica/Pages'), for: 'App\Filament\PlanificacionAcademica\Pages')
             ->pages([
                 Dashboard::class,
                 CronogramasDashboard::class,
+                
             ])
             ->discoverWidgets(in: app_path('Filament/PlanificacionAcademica/Widgets'), for: 'App\Filament\PlanificacionAcademica\Widgets')
             ->widgets([
                 AccountWidget::class,
                 CronosenaInfoWidget::class,
+                ShortcutsWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -94,14 +99,10 @@ class PlanificacionAcademicaPanelProvider extends PanelProvider
                     ->collapsed(),
             ])
 
-            ->viteTheme('resources/css/filament/theme.css')
-
-            /*
-            ->assets([
-                Css::make('custom-stylesheet', resource_path('css/custom.css')),
-                //Js::make('custom-script', resource_path('js/custom.js')),
+            ->viteTheme([
+                'resources/css/filament/theme.css',
+                'resources/js/app.js',
             ])
-                ;*/
 
             //->topNavigation() //Habilitar la barra de navegación superior
 

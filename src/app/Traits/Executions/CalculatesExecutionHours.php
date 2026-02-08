@@ -7,8 +7,7 @@ use Carbon\Carbon;
 trait CalculatesExecutionHours
 {
     /**
-     * Calcula el total de horas laborales entre dos fechas,
-     * considerando únicamente días hábiles (lunes a viernes).
+     * Calcula el total de horas entre dos fechas.
      */
     public static function calculateWorkHoursBetweenDates($startDate, $endDate)
     {
@@ -23,28 +22,24 @@ trait CalculatesExecutionHours
             return null;
         }
 
-        $businessDays = self::countBusinessDays($start, $end);
+        $days = self::countDays($start, $end);
         $dailyHours   = 8;
 
-        return $businessDays * $dailyHours;
+        return $days * $dailyHours;
     }
 
     /**
-     * Cuenta cuántos días hábiles existen entre dos fechas.
+     * Cuenta cuántos días existen entre dos fechas.
      */
-    private static function countBusinessDays(Carbon $start, Carbon $end)
+    private static function countDays(Carbon $start, Carbon $end)
     {
-        $days = 0;
-        $current = $start->copy();
-
-        while ($current->lte($end)) {
-            if ($current->isWeekday()) {
-                $days++;
-            }
-            $current->addDay();
+        if ($end->lessThan($start)) {
+            return 0;
         }
 
-        return $days;
+        return $start->copy()->startOfDay()
+            ->diffInDays($end->copy()->startOfDay()) + 1;
+            
     }
 
     /**

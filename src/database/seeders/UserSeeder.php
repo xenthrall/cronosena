@@ -24,6 +24,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'cronosena',
                 'password' => Hash::make('password'),
+                'email_verified_at' => now(),
             ]
         );
 

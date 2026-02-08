@@ -74,6 +74,7 @@ class EditExecutionAction extends Action
                 TextInput::make('executed_hours')
                     ->label('Horas ejecutadas')
                     ->integer()
+                    ->disabled()
                     ->minValue(1)
                     ->maxValue(fn($record) => $record->fichaCompetency->remaining_hours + $record->executed_hours)
                     ->placeholder(fn($record) => "Máximo: " . ($record->fichaCompetency->remaining_hours + $record->executed_hours) . " horas")

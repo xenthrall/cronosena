@@ -5,37 +5,58 @@ namespace Database\Seeders;
 use App\Models\Instructor;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 
 class InstructorSeeder extends Seeder
 {
     public function run(): void
     {
-        $path = database_path('data/instructors.json');
+        $path = database_path('data/instructors');
+        $files = File::glob($path . '/*.json');
 
-        if (!File::exists($path)) {
-            $this->command->error("El archivo instructors.json no existe en database/data");
-            return;
+        $contadorInstructores = 0;
+
+        foreach ($files as $file) {
+            $jsonContent = File::get($file);
+            $instructors = json_decode($jsonContent, true);
+
+            if (!is_array($instructors)) {
+                $this->command->warn("⚠️ Archivo inválido: {$file}");
+                continue;
+            }
+
+            foreach ($instructors as $data) {
+                // Validación mínima
+                if (!isset($data['document_number'])) {
+                    $this->command->warn("⚠️ Instructor sin document_number en {$file}");
+                    continue;
+                }
+
+                $instructorData = [
+                    'document_number'      => $data['document_number'],
+                    'document_type'        => $data['document_type'] ?? 'CC',
+                    'full_name'            => $data['full_name'] ?? null,
+                    'name'                 => $data['name'] ?? null,
+                    'last_name'            => $data['last_name'] ?? null,
+                    'email'                => $data['email'] ?? null,
+                    'institutional_email'  => $data['institutional_email'] ?? null,
+                    'phone'                => $data['phone'] ?? null,
+                    'executing_team_id'    => $data['executing_team_id'] ?? 2,
+
+                    // Password por defecto: documento_2026cata
+                    'password' => $data['document_number'] . '_2026cata',
+
+                ];
+
+                Instructor::updateOrCreate(
+                    ['document_number' => $data['document_number']],
+                    $instructorData
+                );
+
+                $contadorInstructores++;
+            }
         }
 
-        $data = json_decode(File::get($path), true);
-
-        $count = 1;
-
-        foreach ($data as $item) {
-            Instructor::create([
-                'document_number' => $item['document_number'] . '-' . $count,
-                'document_type' => 'CC',
-                'full_name' => $item['full_name'],
-                'name' => $item['name'],
-                'last_name' => $item['last_name'] ?? null,
-                'email' => strtolower(str_replace(' ', '', $item['name'])) . $count . '@cronosena.com',
-                'phone' => null,
-                'password' => 'password2025',
-                'is_active' => true,
-            ]);
-            $count++;
-        }
-
-        $this->command->info("✅ Instructores creados correctamente.");
+        $this->command->info("✅ {$contadorInstructores} instructores creados correctamente.");
     }
 }

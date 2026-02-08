@@ -2,18 +2,42 @@
 <html lang="es">
 
 <head>
+    <!-- ================= SEO BÁSICO ================= -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CronoSENA — Bienvenido</title>
+
+    <title>
+        CronoSENA CATA | Gestión Académica SENA Málaga Santander
+    </title>
+
+    <meta name="description"
+        content="CronoSENA CATA es la plataforma oficial de planificación académica del Centro Agroempresarial y Turístico de los Andes (SENA Málaga, Santander). Consulta horarios, planificación e información académica." />
+
+    <meta name="author" content="CronoSENA - Xenthrall" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- ================= OPEN GRAPH / REDES ================= -->
+    <meta property="og:title" content="CronoSENA CATA | Gestión Académica SENA Málaga" />
+    <meta property="og:description"
+        content="Consulta horarios y gestiona la planificación académica del Centro Agroempresarial y Turístico de los Andes - SENA Málaga, Santander." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://cata.cronosena.site" />
+    <meta property="og:image" content="https://cata.cronosena.site/images/logo-cata-removebg.png" />
+
+
+    <link rel="canonical" href="https://cata.cronosena.site" />
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+
     <style>
         :root {
             --text-dark: #111827;
             --text-light: #fff;
             --gradient: linear-gradient(83.21deg, #3245ff 0%, #bc52ee 100%);
             --font: Inter, Roboto, 'Helvetica Neue', Arial, sans-serif;
-            --pink-light: #ffe9f2; /* fondo rosa claro */
-            --pink-accent: #d66aa8; /* texto / hover */
+            --pink-light: #ffe9f2;
+            /* fondo rosa claro */
+            --pink-accent: #d66aa8;
+            /* texto / hover */
             --muted: #6b7280;
         }
 
@@ -84,7 +108,8 @@
             gap: 12px;
             padding: 16px 0 8px;
             position: relative;
-            flex-direction: column; /* logo arriba, crono + button abajo */
+            flex-direction: column;
+            /* logo arriba, crono + button abajo */
         }
 
         /* Logo */
@@ -303,11 +328,35 @@
                 padding: 0.55rem 0.9rem;
                 font-size: 0.92rem;
             }
+
         }
+
+        @media (max-width: 420px) {
+            .header-logo {
+                width: 100%;
+                max-height: 100px;
+            }
+
+            .header-crono {
+                height: 68px;
+            }
+
+            .button-crono {
+                padding: 0.45rem 0.75rem;
+                font-size: 0.88rem;
+            }
+
+            footer {
+                font-size: 0.8rem;
+            }
+        }
+
     </style>
 </head>
 
 <body>
+
+
     <!-- Fondo SVG -->
     <img id="background" src="/images/background.svg" alt="Fondo CronoSENA" />
 
@@ -316,13 +365,15 @@
     <main>
         <a href="https://cronosena.site" id="back-button" title="Volver a CronoSENA" aria-label="Volver a CronoSENA">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                aria-hidden="true">
                 <path d="m15 18-6-6 6-6" />
             </svg>
         </a>
 
         <div class="header-bar">
-            <img src="/images/logo-cata-removebg.png" alt="CronoSENA Logo" class="header-logo">
+            <img src="/images/logo-cata-removebg.png" class="header-logo" 
+            alt="CronoSENA CATA - Centro Agroempresarial y Turístico de los Andes SENA Málaga">
 
             <!-- Contenedor con Crono y botón lado a lado -->
             <div class="header-container">
@@ -352,7 +403,7 @@
         </div>
     </main>
 
-    <footer>© {{ date('Y') }} CronoSENA — xenthrall</footer>
+    <footer>© {{ date('Y') }} CronoSENA — Xenthrall</footer>
 
     <script>
         const cronoLogo = document.getElementById('crono-logo');

@@ -15,10 +15,27 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('username')->nullable()->unique();
+            $table->string('photo_url')->nullable();
+
+            $table->string('password')->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->text('app_authentication_secret')->nullable();
+
+            $table->boolean('is_active')->default(true);
+            $table->timestamp('blocked_at')->nullable();
+            $table->timestamp('last_login_at')->nullable();
+            
+            // Auditoría
+            $table->foreignId('created_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
             $table->rememberToken();
             $table->timestamps();
+
+            
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

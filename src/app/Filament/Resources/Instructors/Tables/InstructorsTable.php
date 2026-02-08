@@ -10,18 +10,22 @@ use Filament\Tables\Table;
 use Filament\Tables\Columns\ImageColumn;
 use Illuminate\Support\Facades\Auth;
 
+use App\Filament\Imports\InstructorImporter;
+use Filament\Actions\ImportAction;
+
+
 class InstructorsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                ImageColumn::make('photo_url')
+                ImageColumn::make('user.photo_url')
                     ->label('')
                     ->disk('public')
                     ->circular()
                     ->toggleable(false),
-                TextColumn::make('full_name')
+                TextColumn::make('user.name')
                     ->label('Instructor')
                     ->searchable() // busca en esta columna
                     ->wrap(),
@@ -43,10 +47,14 @@ class InstructorsTable
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->tooltip(fn($record) => $record->specialty),
 
-                TextColumn::make('email')
+                TextColumn::make('user.email')
                     ->label('Correo')
                     ->searchable()
                     ->toggleable(),
+                TextColumn::make('institutional_email')
+                    ->label('Correo institucional')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('phone')
                     ->label('Teléfono')
@@ -66,6 +74,9 @@ class InstructorsTable
                     ->visible(fn() => Auth::user()?->can('instructor.edit')),
             ])
             ->toolbarActions([
+                ImportAction::make()
+                    ->label('Importar instructores')
+                    ->importer(InstructorImporter::class),
                 BulkActionGroup::make([
 
                 ]),
