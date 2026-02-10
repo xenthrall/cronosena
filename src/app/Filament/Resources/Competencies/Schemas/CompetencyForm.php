@@ -13,6 +13,13 @@ class CompetencyForm
     {
         return $schema
             ->components([
+                Select ::make("program_id")
+                    ->label("Programa")
+                    ->relationship("program", "name")
+                    ->required()
+                    ->searchable()
+                    ->preload(),
+                    
                 Select::make('competency_type_id')
                     ->label('Tipo de Competencia')
                     ->relationship('competencyType', 'name')
