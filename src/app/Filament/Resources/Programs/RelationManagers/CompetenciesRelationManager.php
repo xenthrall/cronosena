@@ -19,6 +19,9 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section as InfoSection;
 use Filament\Tables\Filters\SelectFilter;
 
+use App\Models\Competency;
+use Filament\Notifications\Notification;
+
 class CompetenciesRelationManager extends RelationManager
 {
     protected static string $relationship = 'competencies';
@@ -176,7 +179,26 @@ class CompetenciesRelationManager extends RelationManager
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->disabled(function (Competency $record) {
+                        return $record->fichaCompetencies()->exists();
+                    })
+                    ->tooltip(fn (Competency $record) => $record->fichaCompetencies()->exists()
+                        ? 'No se puede eliminar: Esta competencia ya está asignada a una o más Fichas.'
+                        : null
+                    )
+                    ->before(function (Competency $record, DeleteAction $action) {
+                        if ($record->fichaCompetencies()->exists()) {
+                            Notification::make()
+                                ->title('No se puede eliminar la competencia')
+                                ->body('Esta competencia está siendo utilizada en Fichas activas. No se puede eliminar hasta que sea desvinculada de todas las fichas.')
+                                ->danger()
+                                ->duration(10000) 
+                                ->send();
+
+                            $action->cancel();
+                        }
+                    }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

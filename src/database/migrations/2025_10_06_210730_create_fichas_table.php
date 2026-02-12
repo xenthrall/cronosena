@@ -17,30 +17,29 @@ return new class extends Migration
             $table->string('code')->unique();
 
             // Key dates
-            $table->date('start_date');
-            $table->date('lective_end_date')->nullable(); // Optional academic end date
-            $table->date('end_date')->nullable(); // Optional completion date
+            $table->date('start_date')->nullable();
+            $table->date('lective_end_date')->nullable();
+            $table->date('end_date')->nullable(); 
 
             // Relationships
             $table->foreignId('program_id')
-                ->nullable()
                 ->constrained('programs')
-                ->nullOnDelete();
+                ->restrictOnDelete();
 
             $table->foreignId('municipality_id')
                 ->nullable()
                 ->constrained('municipalities')
-                ->nullOnDelete();
+                ->restrictOnDelete();
 
             $table->foreignId('status_id')
                 ->nullable()
                 ->constrained('ficha_statuses')
-                ->nullOnDelete();
+                ->restrictOnDelete();
 
             $table->foreignId('shift_id')
                 ->nullable()
                 ->constrained('shifts')
-                ->nullOnDelete();
+                ->restrictOnDelete();
 
 
             $table->timestamps();

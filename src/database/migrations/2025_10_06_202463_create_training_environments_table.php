@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreignId('location_id')
                 ->nullable()
                 ->constrained('locations')
-                ->nullOnDelete();
+                ->restrictOnDelete();
                 
             $table->timestamps();
         });

@@ -13,29 +13,24 @@ return new class extends Migration
     {
         Schema::create('competencies', function (Blueprint $table) {
             $table->id();
-
-            // La competencia pertenece al programa directamente
-            $table->foreignId('program_id')
-                ->constrained('programs')
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
-
-            // Relación con norma laboral opcional
-            $table->foreignId('norm_id')
-                ->nullable()
-                ->constrained('norms')
-                ->cascadeOnUpdate()
-                ->nullOnDelete();
-
+            
             // Datos propios de la competencia del programa
             $table->string('name', 255);
             $table->text('description')->nullable();
             $table->unsignedInteger('duration_hours');
 
+            $table->foreignId('program_id')
+                ->constrained('programs')
+                ->restrictOnDelete();
+
+            $table->foreignId('norm_id')
+                ->nullable()
+                ->constrained('norms')
+                ->restrictOnDelete();
+
             $table->foreignId('competency_type_id')
                 ->nullable()
                 ->constrained('competency_types')
-                ->cascadeOnUpdate()
                 ->restrictOnDelete();
 
             $table->timestamps();

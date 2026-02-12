@@ -22,12 +22,12 @@ return new class extends Migration
             $table->foreignId('training_level_id')
                 ->nullable()
                 ->constrained('training_levels')
-                ->nullOnDelete();
+                ->restrictOnDelete();
 
             $table->foreignId('special_program_name_id')
                 ->nullable()
                 ->constrained('special_program_names')
-                ->nullOnDelete();
+                ->restrictOnDelete();
 
             $table->timestamps();
 
