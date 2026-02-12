@@ -21,11 +21,11 @@
     <meta property="og:description"
         content="Consulta horarios y gestiona la planificación académica del Centro Agroempresarial y Turístico de los Andes - SENA Málaga, Santander." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://cata.cronosena.site" />
-    <meta property="og:image" content="https://cata.cronosena.site/images/logo-cata-removebg.png" />
+    <meta property="og:url" content="https://cata.cronosena.com" />
+    <meta property="og:image" content="https://cata.cronosena.com/images/logo-cata-removebg.png" />
 
 
-    <link rel="canonical" href="https://cata.cronosena.site" />
+    <link rel="canonical" href="https://cata.cronosena.com" />
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
 
     <style>
@@ -363,7 +363,7 @@
     <a class="button-admin" href="{{ url('/admin') }}">Administración General</a>
 
     <main>
-        <a href="https://cronosena.site" id="back-button" title="Volver a CronoSENA" aria-label="Volver a CronoSENA">
+        <a href="https://cronosena.com" id="back-button" title="Volver a CronoSENA" aria-label="Volver a CronoSENA">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                 aria-hidden="true">
