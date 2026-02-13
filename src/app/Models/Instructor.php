@@ -67,4 +67,9 @@ class Instructor extends Model
     {
         return trim("{$this->first_name} {$this->last_name}");
     }
+    
+    public function getFullLabelAttribute(): string
+    {
+        return "{$this->document_number} - {$this->full_name}";
+    }
 }

@@ -41,6 +41,8 @@ class ManageInstructorLeadershipTable extends Component implements HasActions, H
                     ->disk('public')
                     ->circular()
                     ->toggleable(false),
+                TextColumn::make('instructor.document_number')
+                    ->label('Documento'),
 
                 TextColumn::make('instructor.full_name')
                     ->label('Instructor'),
