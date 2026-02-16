@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Filament\Imports\InstructorImporter;
 use Filament\Actions\ImportAction;
 
+use Filament\Tables\Filters\TernaryFilter;
+use Illuminate\Database\Eloquent\Builder;
+
 
 class InstructorsTable
 {
@@ -24,15 +27,15 @@ class InstructorsTable
                     ->label('')
                     ->disk('public')
                     ->circular()
-                    ->toggleable(false),
-                TextColumn::make('user.name')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('full_name')
                     ->label('Instructor')
-                    ->searchable() // busca en esta columna
+                    ->searchable()
                     ->wrap(),
                 TextColumn::make('document_number')
                     ->label('Documento')
                     ->searchable()
-                    ->formatStateUsing(fn ($state, $record) => "{$record->document_type} {$record->document_number}"),
+                    ->formatStateUsing(fn($state, $record) => "{$record->document_type} {$record->document_number}"),
 
                 TextColumn::make('executingTeam.name')
                     ->label('Equipo ejecutor')
@@ -50,6 +53,14 @@ class InstructorsTable
                 TextColumn::make('user.email')
                     ->label('Correo')
                     ->searchable()
+                    ->default('Sin usuario de ingreso')
+                    ->color(fn($record) => $record->user_id ? 'success' : 'danger')
+                    ->tooltip(
+                        fn($record) =>
+                        $record->user_id
+                            ? $record->user->email
+                            : 'Este instructor no tiene usuario para ingresar al sistema'
+                    )
                     ->toggleable(),
                 TextColumn::make('institutional_email')
                     ->label('Correo institucional')
@@ -67,8 +78,24 @@ class InstructorsTable
                     ->toggleable(isToggledHiddenByDefault: false),
             ])
             ->filters([
-                //
+                TernaryFilter::make('has_user')
+                    ->label('Acceso al sistema')
+                    ->placeholder('Todos los instructores')
+                    ->trueLabel('Con usuario asignado')
+                    ->falseLabel('Sin usuario asignado')
+                    ->queries(
+                        true: fn(Builder $query) => $query->whereNotNull('user_id'),
+                        false: fn(Builder $query) => $query->whereNull('user_id'),
+                    ),
+
+                TernaryFilter::make('is_active')
+                    ->label('Estado')
+                    ->placeholder('Todos')
+                    ->trueLabel('Activos')
+                    ->falseLabel('Inactivos')
+                    ->boolean(), 
             ])
+
             ->recordActions([
                 EditAction::make()
                     ->visible(fn() => Auth::user()?->can('instructor.edit')),
@@ -77,9 +104,7 @@ class InstructorsTable
                 ImportAction::make()
                     ->label('Importar instructores')
                     ->importer(InstructorImporter::class),
-                BulkActionGroup::make([
-
-                ]),
+                BulkActionGroup::make([]),
             ]);
     }
 }

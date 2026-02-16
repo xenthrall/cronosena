@@ -16,15 +16,16 @@ return new class extends Migration
 
             // Relación 1:1 con users
             $table->foreignId('user_id')
+                ->nullable()
                 ->unique()
                 ->constrained('users')
-                ->cascadeOnDelete();
+                ->nullOnDelete();
 
-                $table->string('document_number')->unique();
+            $table->string('document_number')->unique();
             $table->string('document_type')->nullable();
 
-            $table->string('first_name')->nullable();
-            $table->string('last_name')->nullable();
+            $table->string('first_name');
+            $table->string('last_name');
 
             // Contacto institucional
             $table->string('institutional_email')->nullable()->unique();
@@ -41,7 +42,6 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
 
             $table->timestamps();
-
         });
     }
 

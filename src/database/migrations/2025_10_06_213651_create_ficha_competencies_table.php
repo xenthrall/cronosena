@@ -15,8 +15,13 @@ return new class extends Migration
             $table->id();
 
              // Relationships
-            $table->foreignId('ficha_id')->constrained('fichas')->onDelete('cascade');
-            $table->foreignId('competency_id')->constrained('competencies')->onDelete('cascade');
+            $table->foreignId('ficha_id')
+                ->constrained('fichas')
+                ->onDelete('cascade');
+
+            $table->foreignId('competency_id')
+                ->constrained('competencies')
+                ->restrictOnDelete();
 
             // Custom fields
             $table->integer('order')->default(1);

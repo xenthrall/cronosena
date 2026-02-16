@@ -23,8 +23,9 @@ class CreateInstructorLeadership extends Action
             ->schema([
                 Select::make('instructor_id')
                     ->label('Instructor')
-                    ->options(Instructor::query()->pluck('full_name', 'id'))
+                    ->options(Instructor::all()->pluck('full_label', 'id'))
                     ->searchable()
+                    ->preload()
                     ->required(),
 
                 DatePicker::make('start_date')
@@ -41,7 +42,6 @@ class CreateInstructorLeadership extends Action
                     'start_date'    => $data['start_date'],
                     'end_date'      => null, // No se define al crear
                 ]);
-
             })
             ->successNotificationTitle('Instructor líder asignado con éxito.');
     }

@@ -18,7 +18,7 @@ return new class extends Migration
 
             $table->foreignId('norm_id')
                 ->constrained('norms')
-                ->cascadeOnDelete();
+                ->restrictOnDelete();
 
             $table->primary(['instructor_id', 'norm_id']);
         });

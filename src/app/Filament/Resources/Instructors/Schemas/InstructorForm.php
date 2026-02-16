@@ -19,26 +19,19 @@ class InstructorForm
                 Section::make('Información personal')
                     ->description('Datos básicos del instructor.')
                     ->schema([
-                        TextInput::make('full_name')
-                            ->label('Nombre completo')
+                        TextInput::make('first_name')
+                            ->label('Nombres')
                             ->required()
                             ->maxLength(50)
                             ->columnSpanFull()
-                            ->placeholder('Ej. Carlos Rodríguez'),
+                            ->placeholder('Ej. Carlos Andrés'),
                           
-                        TextInput::make('name')
-                            ->label('Nombre de Usuario')
-                            ->required()
-                            ->maxLength(50)
-                            ->columnSpanFull()
-                            ->placeholder('Ej. Carlos'),
-                        /*  
                         TextInput::make('last_name')
                             ->label('Apellidos')
                             ->required()
                             ->maxLength(50)
-                            ->placeholder('Ej. Rodríguez'),
-                        */
+                            ->columnSpanFull()
+                            ->placeholder('Ej. Rodríguez García'),
 
                         Select::make('document_type')
                             ->label('Tipo de documento')
@@ -55,8 +48,8 @@ class InstructorForm
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(20),
-                        TextInput::make('email')
-                            ->label('Correo electrónico')
+                        TextInput::make('institutional_email')
+                            ->label('Correo institucional')
                             ->email()
                             ->unique(ignoreRecord: true)
                             ->maxLength(100)
