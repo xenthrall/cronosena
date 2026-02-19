@@ -64,7 +64,7 @@ class GanttInstructorsCompetencies extends GanttBaseComponent
         $instructorIds = $records->pluck('instructor_id')->unique();
 
         $instructors = Instructor::whereIn('id', $instructorIds)
-            ->orderBy('full_name')
+            ->orderBy('last_name')
             ->get();
 
         $this->rows = [];
@@ -84,8 +84,8 @@ class GanttInstructorsCompetencies extends GanttBaseComponent
             $this->rows[] = [
                 'id'        => $instructor->id,
                 'label'     => $instructor->full_name,
-                'sub_label' => $instructor->email,
-                'avatarUrl' => $instructor->getFilamentAvatarUrl(),
+                'sub_label' => $instructor->institutional_email,
+                'avatarUrl' => $instructor->user?->getFilamentAvatarUrl(),
             ];
 
             // Inicializar contenedor de barras
