@@ -22,7 +22,7 @@ class HorarioApiController extends Controller
             ->get()
             ->map(function ($execution) {
 
-                $shift = $execution->fichaCompetency->ficha->shift;
+                $shift = $execution->fichaCompetency?->ficha?->shift;
 
                 $startDate = Carbon::parse($execution->execution_date);
                 $endDate   = Carbon::parse($execution->completion_date);
@@ -65,12 +65,12 @@ class HorarioApiController extends Controller
                     'end'   => $endDate->copy()->addDay(),
                     'allDay' => true,
 
-                    'color' => $shift->color,
+                    'color' => $shift?->color ?? '#47d837',
 
                     // Datos de dominio
                     'extendedProps' => [
                         'execution_id'     => $execution->id,
-                        'shift'            => $shift->name,
+                        'shift'            => $shift?->name ?? 'Sin jornada',
                         'execution_range'  => $executionRange,
                         'instructor'       => $execution->instructor->full_name ?? null,
                         'executed_hours'   => $execution->executed_hours,
@@ -97,7 +97,7 @@ class HorarioApiController extends Controller
             ->get()
             ->map(function ($execution) {
 
-                $shift = $execution->fichaCompetency->ficha->shift;
+                $shift = $execution->fichaCompetency?->ficha?->shift;
 
                 $startDate = Carbon::parse($execution->execution_date);
                 $endDate   = Carbon::parse($execution->completion_date);
@@ -140,12 +140,12 @@ class HorarioApiController extends Controller
                     'end'    => $endDate->copy()->addDay(),
                     'allDay' => true,
 
-                    'color' => $shift->color,
+                    'color' => $shift?->color ?? '#47d837',
 
                     // Datos de dominio
                     'extendedProps' => [
                         'execution_id'    => $execution->id,
-                        'shift'           => $shift->name,
+                        'shift'           => $shift?->name ?? 'Sin jornada',
                         'execution_range' => $executionRange,
                         'instructor'      => $execution->instructor->full_name ?? null,
                         'executed_hours'  => $execution->executed_hours,
@@ -171,7 +171,7 @@ class HorarioApiController extends Controller
             ->get()
             ->map(function ($execution) {
 
-                $shift = $execution->fichaCompetency->ficha->shift;
+                $shift = $execution->fichaCompetency?->ficha?->shift;
 
                 $startDate = Carbon::parse($execution->execution_date);
                 $endDate   = Carbon::parse($execution->completion_date);
@@ -214,12 +214,12 @@ class HorarioApiController extends Controller
                     'end'    => $endDate->copy()->addDay(),
                     'allDay' => true,
 
-                    'color' => $shift->color,
+                    'color' => $shift?->color ?? '#47d837',
 
                     // Datos de dominio
                     'extendedProps' => [
                         'execution_id'    => $execution->id,
-                        'shift'           => $shift->name,
+                        'shift'           => $shift?->name ?? 'Sin jornada',
                         'execution_range' => $executionRange,
                         'instructor'      => $execution->instructor->full_name ?? null,
                         'executed_hours'  => $execution->executed_hours,
