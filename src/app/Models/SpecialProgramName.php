@@ -11,4 +11,12 @@ class SpecialProgramName extends Model
     protected $fillable = [
         'name',
     ];
+
+    /**
+     * relaciones
+     */
+    public function programs()
+    {
+        return $this->hasMany(Program::class);
+    }
 }
