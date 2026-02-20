@@ -34,7 +34,7 @@ return new class extends Migration
             $table->foreignId('executing_team_id')
                 ->nullable()
                 ->constrained('executing_teams')
-                ->nullOnDelete();
+                ->restrictOnDelete();
 
             $table->string('specialty')->nullable();
 
