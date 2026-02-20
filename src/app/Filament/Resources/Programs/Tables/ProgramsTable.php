@@ -5,6 +5,8 @@ namespace App\Filament\Resources\Programs\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ImportAction;
+use App\Filament\Imports\ProgramImporter;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -80,6 +82,9 @@ class ProgramsTable
                 EditAction::make(),
             ])
             ->toolbarActions([
+                ImportAction::make()
+                    ->label('Importar programas')
+                    ->importer(ProgramImporter::class),
                 BulkActionGroup::make([
                     //DeleteBulkAction::make(),
                 ]),
