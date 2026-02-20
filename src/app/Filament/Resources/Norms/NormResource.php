@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Notifications\Notification;
 
 class NormResource extends Resource
 {
@@ -77,12 +78,40 @@ class NormResource extends Resource
             ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->disabled(function (Norm $record) {
+                        // Deshabilitar si tiene competencias o instructores asociados
+                        return $record->competencies()->exists() || $record->instructors()->exists();
+                    })
+                    ->tooltip(function (Norm $record) {
+                        if ($record->competencies()->exists() || $record->instructors()->exists()) {
+                            return 'No se puede eliminar porque está asociada a competencias o instructores';
+                        }
+                        return null;
+                    })
+                    ->before(function (Norm $record, DeleteAction $action) {
+                        // Verificación de seguridad antes de ejecutar
+                        if ($record->competencies()->exists() || $record->instructors()->exists()) {
+
+                            // Determinamos el mensaje exacto para ser más claros con el usuario
+                            $motivo = [];
+                            if ($record->competencies()->exists()) $motivo[] = 'competencias';
+                            if ($record->instructors()->exists()) $motivo[] = 'instructores';
+                            $motivoTexto = implode(' e ', $motivo);
+
+                            Notification::make()
+                                ->title('No se puede eliminar la norma')
+                                ->body("Esta norma está siendo utilizada por $motivoTexto. Elimine las asociaciones primero.")
+                                ->danger()
+                                ->duration(8000)
+                                ->send();
+
+                            $action->cancel();
+                        }
+                    }),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-
-                ]),
+                BulkActionGroup::make([]),
             ]);
     }
 
