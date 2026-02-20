@@ -21,6 +21,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Tables\Columns\ColorColumn;
 use Illuminate\Support\Facades\Auth;
+use Filament\Notifications\Notification;
 
 class ShiftResource extends Resource
 {
@@ -160,7 +161,28 @@ class ShiftResource extends Resource
             ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->disabled(function (Shift $record) {
+                        return $record->fichas()->exists();
+                    })
+                    ->tooltip(function (Shift $record) {
+                        if ($record->fichas()->exists()) {
+                            return 'No se puede eliminar porque está asociada a una o más fichas';
+                        }
+                        return null;
+                    })
+                    ->before(function (Shift $record, DeleteAction $action) {
+                        if ($record->fichas()->exists()) {
+                            Notification::make()
+                                ->title('No se puede eliminar la jornada')
+                                ->body('Esta jornada está siendo utilizada por una o más fichas. Por favor, asigne otra jornada a esas fichas antes de eliminarla.')
+                                ->danger()
+                                ->duration(8000)
+                                ->send();
+
+                            $action->cancel();
+                        }
+                    }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([]),
