@@ -18,6 +18,8 @@ use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section as InfoSection;
 use Filament\Tables\Filters\SelectFilter;
+use App\Filament\Imports\CompetencyImporter;
+use Filament\Actions\ImportAction;
 
 use App\Models\Competency;
 use Filament\Notifications\Notification;
@@ -175,6 +177,15 @@ class CompetenciesRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make(),
+                ImportAction::make()
+                    ->label('Importar competencias')
+                    ->importer(CompetencyImporter::class)
+                    ->options(function (RelationManager $livewire): array {
+                        return [
+                            // Capturamos el ID del programa actual
+                            'program_id' => $livewire->getOwnerRecord()->id, 
+                        ];
+                    }),
             ])
             ->recordActions([
                 ViewAction::make(),

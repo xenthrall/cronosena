@@ -12,6 +12,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
+use Filament\Notifications\Notification;
 
 class MunicipalityResource extends Resource
 {
@@ -59,7 +60,35 @@ class MunicipalityResource extends Resource
             ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->disabled(function (Municipality $record) {
+                        return $record->locations()->exists() || $record->fichas()->exists();
+                    })
+                    ->tooltip(function (Municipality $record) {
+                        if ($record->locations()->exists() || $record->fichas()->exists()) {
+                            return 'No se puede eliminar porque está asociado a sedes o fichas';
+                        }
+                        return null;
+                    })
+                    ->before(function (Municipality $record, DeleteAction $action) {
+                        if ($record->locations()->exists() || $record->fichas()->exists()) {
+                            
+                            // Determinamos exactamente dónde se está usando para el mensaje
+                            $motivos = [];
+                            if ($record->locations()->exists()) $motivos[] = 'sedes';
+                            if ($record->fichas()->exists()) $motivos[] = 'fichas';
+                            $motivoTexto = implode(' y ', $motivos);
+
+                            Notification::make()
+                                ->title('No se puede eliminar el municipio')
+                                ->body("Este municipio está siendo utilizado por $motivoTexto. Por favor, reasigne estos registros antes de eliminarlo.")
+                                ->danger()
+                                ->duration(8000)
+                                ->send();
+
+                            $action->cancel();
+                        }
+                    }),
             ])
             ->toolbarActions([
                 //

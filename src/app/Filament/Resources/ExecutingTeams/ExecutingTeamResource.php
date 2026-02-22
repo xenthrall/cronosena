@@ -13,6 +13,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
+use Filament\Notifications\Notification;
 
 class ExecutingTeamResource extends Resource
 {
@@ -59,12 +60,31 @@ class ExecutingTeamResource extends Resource
             ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->disabled(function (ExecutingTeam $record) {
+                        return $record->instructors()->exists();
+                    })
+                    ->tooltip(function (ExecutingTeam $record) {
+                        if ($record->instructors()->exists()) {
+                            return 'No se puede eliminar porque tiene instructores asociados';
+                        }
+                        return null;
+                    })
+                    ->before(function (ExecutingTeam $record, DeleteAction $action) {
+                        if ($record->instructors()->exists()) {
+                            Notification::make()
+                                ->title('No se puede eliminar el equipo ejecutor')
+                                ->body('Este equipo ejecutor tiene instructores asociados. Por favor, reasigne a los instructores a otro equipo antes de eliminarlo.')
+                                ->danger()
+                                ->duration(8000)
+                                ->send();
+
+                            $action->cancel();
+                        }
+                    }),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-
-                ]),
+                BulkActionGroup::make([]),
             ]);
     }
 
@@ -79,5 +99,4 @@ class ExecutingTeamResource extends Resource
     {
         return Auth::user()?->can('instructor.manageEquipoEjecutor');
     }
-  
 }

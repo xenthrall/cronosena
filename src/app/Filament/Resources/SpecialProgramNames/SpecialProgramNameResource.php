@@ -15,6 +15,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Notifications\Notification;
 
 class SpecialProgramNameResource extends Resource
 {
@@ -68,7 +69,28 @@ class SpecialProgramNameResource extends Resource
             ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->disabled(function (SpecialProgramName $record) {
+                        return $record->programs()->exists();
+                    })
+                    ->tooltip(function (SpecialProgramName $record) {
+                        if ($record->programs()->exists()) {
+                            return 'No se puede eliminar porque está asociado a uno o más programas';
+                        }
+                        return null;
+                    })
+                    ->before(function (SpecialProgramName $record, DeleteAction $action) {
+                        if ($record->programs()->exists()) {
+                            Notification::make()
+                                ->title('No se puede eliminar')
+                                ->body('Este nombre de programa especial está siendo utilizado por uno o más programas. Por favor, reasigne esos programas antes de eliminarlo.')
+                                ->danger()
+                                ->duration(8000)
+                                ->send();
+
+                            $action->cancel();
+                        }
+                    }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

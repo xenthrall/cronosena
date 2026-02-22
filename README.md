@@ -11,8 +11,8 @@ Diseñada con un enfoque en **automatización, rendimiento y simplicidad**.
 
 ### 🌐 Recursos Oficiales
 
-- **Portal:** [cronosena.site](https://cronosena.site)
-- **Documentación:** [docs.cronosena.site](https://docs.cronosena.site)
+- **Portal:** [cronosena.com](https://cronosena.com)
+- **Documentación:** [docs.cronosena.com](https://docs.cronosena.com)
 - **Repositorio:** [github.com/xenthrall/CronoSENA](https://github.com/xenthrall/CronoSENA)
 
 ---

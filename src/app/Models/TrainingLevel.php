@@ -14,6 +14,6 @@ class TrainingLevel extends Model
 
     public function programs()
     {
-        //return $this->hasMany(Program::class);
+        return $this->hasMany(Program::class);
     }
 }

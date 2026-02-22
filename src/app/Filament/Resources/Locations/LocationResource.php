@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Notifications\Notification;
 
 class LocationResource extends Resource
 {
@@ -88,7 +89,28 @@ class LocationResource extends Resource
             ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->disabled(function (Location $record) {
+                        return $record->trainingEnvironments()->exists();
+                    })
+                    ->tooltip(function (Location $record) {
+                        if ($record->trainingEnvironments()->exists()) {
+                            return 'No se puede eliminar porque tiene ambientes de formación asociados';
+                        }
+                        return null;
+                    })
+                    ->before(function (Location $record, DeleteAction $action) {
+                        if ($record->trainingEnvironments()->exists()) {
+                            Notification::make()
+                                ->title('No se puede eliminar la sede')
+                                ->body('Esta sede tiene ambientes de formación asociados. Por favor, reasigne o elimine estos ambientes antes de borrar la sede.')
+                                ->danger()
+                                ->duration(8000)
+                                ->send();
+
+                            $action->cancel();
+                        }
+                    }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

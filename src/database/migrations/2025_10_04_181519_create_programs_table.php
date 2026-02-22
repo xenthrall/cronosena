@@ -16,8 +16,8 @@ return new class extends Migration
 
             $table->string('program_code');
             $table->string('name');
-            $table->integer('total_duration_hours')->unsigned();
-            $table->string('version')->default('1')->nullable();
+            $table->integer('total_duration_hours')->unsigned()->nullable();
+            $table->string('version')->default('1');
 
             $table->foreignId('training_level_id')
                 ->nullable()

@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Notifications\Notification;
 
 class TrainingLevelResource extends Resource
 {
@@ -65,7 +66,28 @@ class TrainingLevelResource extends Resource
             ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->disabled(function (TrainingLevel $record) {
+                        return $record->programs()->exists();
+                    })
+                    ->tooltip(function (TrainingLevel $record) {
+                        if ($record->programs()->exists()) {
+                            return 'No se puede eliminar porque está asociado a uno o más programas';
+                        }
+                        return null;
+                    })
+                    ->before(function (TrainingLevel $record, DeleteAction $action) {
+                        if ($record->programs()->exists()) {
+                            Notification::make()
+                                ->title('No se puede eliminar el nivel de formación')
+                                ->body('Este nivel de formación está siendo utilizado por uno o más programas. Por favor, reasigne esos programas antes de eliminarlo.')
+                                ->danger()
+                                ->duration(8000)
+                                ->send();
+
+                            $action->cancel();
+                        }
+                    }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

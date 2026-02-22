@@ -14,6 +14,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Notifications\Notification;
 
 class CompetencyTypeResource extends Resource
 {
@@ -74,7 +75,28 @@ class CompetencyTypeResource extends Resource
             ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->disabled(function (CompetencyType $record) {
+                        return $record->competencies()->exists();
+                    })
+                    ->tooltip(function (CompetencyType $record) {
+                        if ($record->competencies()->exists()) {
+                            return 'No se puede eliminar porque está asociado a una o más competencias';
+                        }
+                        return null;
+                    })
+                    ->before(function (CompetencyType $record, DeleteAction $action) {
+                        if ($record->competencies()->exists()) {
+                            Notification::make()
+                                ->title('No se puede eliminar el tipo de competencia')
+                                ->body('Este tipo está siendo utilizado por una o más competencias. Debe reasignar esas competencias antes de eliminarlo.')
+                                ->danger()
+                                ->duration(8000)
+                                ->send();
+
+                            $action->cancel();
+                        }
+                    }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

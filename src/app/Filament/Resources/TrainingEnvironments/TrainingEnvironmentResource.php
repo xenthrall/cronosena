@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Notifications\Notification;
 
 class TrainingEnvironmentResource extends Resource
 {
@@ -83,7 +84,28 @@ class TrainingEnvironmentResource extends Resource
             ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->disabled(function (TrainingEnvironment $record) {
+                        return $record->competencyExecutions()->exists();
+                    })
+                    ->tooltip(function (TrainingEnvironment $record) {
+                        if ($record->competencyExecutions()->exists()) {
+                            return 'No se puede eliminar porque tiene ejecuciones programadas asociadas';
+                        }
+                        return null;
+                    })
+                    ->before(function (TrainingEnvironment $record, DeleteAction $action) {
+                        if ($record->competencyExecutions()->exists()) {
+                            Notification::make()
+                                ->title('No se puede eliminar el ambiente')
+                                ->body('Este ambiente de formación tiene ejecuciones o programaciones asociadas. Por favor, libere el ambiente de esas ejecuciones antes de eliminarlo.')
+                                ->danger()
+                                ->duration(8000)
+                                ->send();
+
+                            $action->cancel();
+                        }
+                    }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
